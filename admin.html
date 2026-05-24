@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audiory Desk | Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex flex-col">
+
+    <nav class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-toolbox text-indigo-400 text-2xl"></i>
+                    <span class="text-xl font-bold tracking-tight text-white">Audiory Desk <span class="text-xs bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded ml-1 border border-indigo-500/30">Admin</span></span>
+                </div>
+                <div class="flex items-center space-x-4" id="auth-header">
+                    </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow flex max-w-7xl mx-auto w-full p-4 md:p-6 gap-6 overflow-hidden">
+        
+        <section id="view-unauthorized" class="w-full max-w-md mx-auto my-20 bg-slate-800 border border-slate-700 p-8 rounded-2xl text-center shadow-xl">
+            <i class="fa-solid fa-shield-halved text-rose-500 text-5xl mb-4"></i>
+            <h2 class="text-2xl font-bold mb-2 text-white">Admin Access Required</h2>
+            <p class="text-slate-400 mb-6 text-sm">You must log in with an authorized account that has <code>isAdmin == true</code> set in your user document schema.</p>
+            <div id="login-container">
+                </div>
+        </section>
+
+        <section id="view-dashboard" class="w-full hidden grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-120px)]">
+            
+            <div class="lg:col-span-4 bg-slate-800 border border-slate-700 rounded-xl flex flex-col overflow-hidden shadow-lg">
+                <div class="p-4 border-b border-slate-700 bg-slate-800/50 flex justify-between items-center">
+                    <h3 class="font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-indigo-400"></i> Open Tickets
+                    </h3>
+                    <span id="ticket-count" class="bg-indigo-600/30 text-indigo-400 font-bold px-2 py-0.5 text-xs rounded border border-indigo-500/20">0</span>
+                </div>
+                
+                <div id="admin-tickets-queue" class="flex-grow overflow-y-auto divide-y divide-slate-700/60 custom-scrollbar">
+                    <div class="text-center py-12 text-slate-500">
+                        <i class="fa-solid fa-circle-notch fa-spin text-xl mb-2"></i>
+                        <p class="text-xs">Fetching global tickets stack...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-8 bg-slate-800 border border-slate-700 rounded-xl flex flex-col overflow-hidden shadow-lg" id="chat-window-placeholder">
+                <div class="flex-grow flex flex-col items-center justify-center p-8 text-center text-slate-500">
+                    <i class="fa-solid fa-comments text-5xl mb-4 text-slate-700"></i>
+                    <h3 class="text-lg font-semibold text-slate-400">No Ticket Selected</h3>
+                    <p class="text-sm max-w-sm mt-1">Select an active customer ticket from the left-hand panel queue to open up the conversation logs and issue updates.</p>
+                </div>
+            </div>
+
+            <div class="lg:col-span-8 bg-slate-800 border border-slate-700 rounded-xl flex flex-col overflow-hidden hidden shadow-lg" id="chat-window-active">
+                <div class="p-4 border-b border-slate-700 bg-slate-800/50 flex justify-between items-center">
+                    <div>
+                        <span id="active-ticket-category" class="text-[10px] font-bold uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">TECHNICAL</span>
+                        <h2 id="active-ticket-subject" class="text-lg font-bold text-white mt-1">Ticket Subject Line</h2>
+                        <p id="active-ticket-email" class="text-xs text-slate-400">customer@email.com</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <select id="update-status-select" class="bg-slate-900 border border-slate-700 rounded-lg text-xs px-2.5 py-1.5 outline-none font-semibold text-amber-400">
+                            <option value="Open">🟢 Open</option>
+                            <option value="Resolved">✅ Resolved</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="ticket-chat-feed" class="flex-grow overflow-y-auto p-4 space-y-4 bg-slate-900/40">
+                    </div>
+
+                <form id="admin-reply-form" class="p-4 bg-slate-800/80 border-t border-slate-700 flex gap-2 items-center">
+                    <input type="text" id="reply-text-input" autocomplete="off" placeholder="Type a professional response to the customer..." required 
+                           class="flex-grow bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-indigo-500 transition">
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl font-medium transition flex items-center gap-2">
+                        <span>Send</span> <i class="fa-solid fa-paper-plane text-xs"></i>
+                    </button>
+                </form>
+            </div>
+
+        </section>
+    </main>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, doc, getDoc, getDocs, query, orderBy, updateDoc, onSnapshot, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // 🔥 USE YOUR EXACT SAME CONFIGURATION OBJECT HERE
+        const firebaseConfig = {
+            apiKey: "AIzaSyCmsFTjDryYOTddWfScTKsnrs0cWAHnpdc",
+            authDomain: "audiory-beat-store.firebaseapp.com",
+            projectId: "audiory-beat-store",
+            storageBucket: "audiory-beat-store.firebasestorage.app",
+            messagingSenderId: "688272560511",
+            appId: "1:688272560511:web:9031e6ce215d6f08764a4a",
+            measurementId: "G-GLYGWQGS26"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let activeTicketId = null;
+        let activeTicketData = null;
+        let unsubscribeReplies = null; // Clear existing stream bindings dynamically
+
+        // ==========================================
+        // 🔐 SECURITY / ACCOUNT VAL CHECK
+        // ==========================================
+        onAuthStateChanged(auth, async (user) => {
+            const authHeader = document.getElementById('auth-header');
+            const loginContainer = document.getElementById('login-container');
+
+            if (user) {
+                // Verify against users collection metadata schema
+                const userDocRef = doc(db, "users", user.uid);
+                const userDocSnap = await getDoc(userDocRef);
+
+                if (userDocSnap.exists() && userDocSnap.data().isAdmin === true) {
+                    // Success! Display Dashboard Layout
+                    authHeader.innerHTML = `
+                        <span class="text-xs bg-slate-700 px-3 py-1.5 rounded-lg border border-slate-600 font-medium text-slate-300">${user.email}</span>
+                        <button id="btn-logout" class="bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white border border-rose-500/20 px-3 py-1.5 rounded-lg text-xs font-medium transition">Logout</button>
+                    `;
+                    document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
+                    
+                    document.getElementById('view-unauthorized').classList.add('hidden');
+                    document.getElementById('view-dashboard').classList.remove('hidden');
+                    
+                    listenToGlobalTicketsQueue();
+                } else {
+                    // Authenticated account lacks admin status rights flags
+                    authHeader.innerHTML = `<button id="btn-logout" class="text-xs text-rose-400 underline">Logout</button>`;
+                    document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
+                    loginContainer.innerHTML = `<p class="text-rose-400 text-xs font-medium mt-4"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Access Denied: User account documentation profile lacks system admin parameters.</p>`;
+                }
+            } else {
+                // Not Logged In State
+                document.getElementById('view-dashboard').classList.add('hidden');
+                document.getElementById('view-unauthorized').classList.remove('hidden');
+                authHeader.innerHTML = '';
+                
+                loginContainer.innerHTML = `
+                    <form id="admin-login-form" class="space-y-3 mt-4 text-left">
+                        <input type="email" id="login-email" placeholder="Admin Email" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white outline-none">
+                        <input type="password" id="login-password" placeholder="Password" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-white outline-none">
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-2.5 rounded-lg transition">Authenticate Admin</button>
+                    </form>
+                `;
+                
+                document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    try {
+                        await signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-password').value);
+                    } catch (err) {
+                        alert("Authentication Error: " + err.message);
+                    }
+                });
+            }
+        });
+
+        // ==========================================
+        // 📥 STREAM TICKETS DATA IN REAL TIME
+        // ==========================================
+        function listenToGlobalTicketsQueue() {
+            const q = query(collection(db, "tickets"), orderBy("createdAt", "desc"));
+            
+            onSnapshot(q, (snapshot) => {
+                const queueDiv = document.getElementById('admin-tickets-queue');
+                document.getElementById('ticket-count').innerText = snapshot.size;
+
+                if (snapshot.empty) {
+                    queueDiv.innerHTML = `<div class="text-center py-12 text-slate-500 text-sm">No user tickets found inside database infrastructure.</div>`;
+                    return;
+                }
+
+                let html = "";
+                snapshot.forEach((ticketDoc) => {
+                    const ticket = ticketDoc.data();
+                    const isSelected = ticketDoc.id === activeTicketId ? 'bg-slate-700/60 border-l-4 border-indigo-500' : 'hover:bg-slate-700/30';
+                    const statusDot = ticket.status === 'Open' ? 'text-amber-400' : 'text-emerald-400';
+                    const timeString = ticket.createdAt ? ticket.createdAt.toDate().toLocaleDateString() : 'Just Now';
+
+                    html += `
+                        <div onclick="openTicketThread('${ticketDoc.id}')" class="p-4 cursor-pointer transition ${isSelected} text-left">
+                            <div class="flex justify-between items-start gap-2">
+                                <span class="text-[10px] font-bold text-slate-400 truncate max-w-[180px]">${ticket.userEmail || 'Anonymous Creator'}</span>
+                                <span class="text-[10px] whitespace-nowrap ${statusDot} font-medium"><i class="fa-solid fa-circle text-[8px] mr-1"></i>${ticket.status}</span>
+                            </div>
+                            <h4 class="text-sm font-bold text-white truncate mt-1">${ticket.subject}</h4>
+                            <p class="text-xs text-slate-400 truncate mt-0.5">${ticket.description}</p>
+                            <span class="text-[10px] text-slate-500 block mt-2"><i class="fa-regular fa-clock mr-1"></i>${timeString}</span>
+                        </div>
+                    `;
+                });
+                
+                queueDiv.innerHTML = html;
+            });
+        }
+
+        // ==========================================
+        // 💬 MANAGE ACTIVE CHAT CONVERSATIONS
+        // ==========================================
+        window.openTicketThread = async function(ticketId) {
+            if (unsubscribeReplies) unsubscribeReplies(); // Unbind past snapshot loops
+            
+            activeTicketId = ticketId;
+            const docRef = doc(db, "tickets", ticketId);
+            const docSnap = await getDoc(docRef);
+            activeTicketData = docSnap.data();
+
+            // Render view components frames
+            document.getElementById('chat-window-placeholder').classList.add('hidden');
+            const activeWindow = document.getElementById('chat-window-active');
+            activeWindow.classList.remove('hidden');
+
+            document.getElementById('active-ticket-category').innerText = activeTicketData.category;
+            document.getElementById('active-ticket-subject').innerText = activeTicketData.subject;
+            document.getElementById('active-ticket-email').innerText = activeTicketData.userEmail || 'User Profile';
+            document.getElementById('update-status-select').value = activeTicketData.status;
+
+            // Re-render ticket queue UI markers to show selected state
+            listenToGlobalTicketsQueue();
+
+            // Set up real-time stream listener for messages inside the selected ticket's subcollection
+            const repliesQuery = query(collection(db, "tickets", ticketId, "messages"), orderBy("timestamp", "asc"));
+            
+            unsubscribeReplies = onSnapshot(repliesQuery, (snapshot) => {
+                const feedDiv = document.getElementById('ticket-chat-feed');
+                
+                // Inject the ticket's primary description field at the top of the chat logs thread
+                let feedHtml = `
+                    <div class="bg-slate-800 p-4 border border-slate-700 rounded-xl max-w-[85%] text-left">
+                        <p class="text-xs text-indigo-400 font-bold mb-1"><i class="fa-solid fa-user-tag mr-1"></i> Initial Issue Description</p>
+                        <p class="text-sm text-slate-200 whitespace-pre-wrap">${activeTicketData.description}</p>
+                    </div>
+                `;
+
+                snapshot.forEach((msgDoc) => {
+                    const msg = msgDoc.data();
+                    const isAdminMsg = msg.sender === 'Admin';
+                    const alignment = isAdminMsg ? 'ml-auto bg-indigo-600 text-white' : 'mr-auto bg-slate-800 border border-slate-700 text-slate-200';
+                    const label = isAdminMsg ? 'You (Admin)' : 'Customer';
+                    const labelColor = isAdminMsg ? 'text-indigo-200' : 'text-indigo-400';
+
+                    feedHtml += `
+                        <div class="${alignment} p-4 rounded-xl max-w-[85%] text-left shadow-sm">
+                            <p class="text-[10px] font-bold ${labelColor} uppercase tracking-wider mb-1">${label}</p>
+                            <p class="text-sm whitespace-pre-wrap">${msg.text}</p>
+                        </div>
+                    `;
+                });
+
+                feedDiv.innerHTML = feedHtml;
+                feedDiv.scrollTop = feedDiv.scrollHeight; // Auto-scroll to lowest point
+            });
+        };
+
+        // Handle Status Select Update Actions
+        document.getElementById('update-status-select').addEventListener('change', async (e) => {
+            if (!activeTicketId) return;
+            const newStatus = e.target.value;
+            await updateDoc(doc(db, "tickets", activeTicketId), { status: newStatus });
+        });
+
+        // ==========================================
+        // 📤 SUBMIT RESPONSES / REPLIES PIPELINES
+        // ==========================================
+        document.getElementById('admin-reply-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const inputField = document.getElementById('reply-text-input');
+            const messageText = inputField.value.trim();
+
+            if (!activeTicketId || !messageText) return;
+
+            try {
+                // Save reply as a document inside the messages subcollection of this ticket
+                await addDoc(collection(db, "tickets", activeTicketId, "messages"), {
+                    sender: "Admin",
+                    text: messageText,
+                    timestamp: serverTimestamp()
+                });
+
+                // Auto-ensure ticket sets or reverts state back to active status values
+                await updateDoc(doc(db, "tickets", activeTicketId), { status: "Open" });
+                
+                inputField.value = "";
+            } catch (err) {
+                alert("Could not deliver message response: " + err.message);
+            }
+        });
+
+    </script>
+</body>
+</html>
