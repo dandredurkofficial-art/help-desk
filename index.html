@@ -26,6 +26,15 @@
                 <div class="flex items-center space-x-4">
                     <button onclick="showView('home')" class="text-gray-600 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Knowledge Base</button>
                     <button onclick="showView('tickets')" class="text-gray-600 hover:text-indigo-600 px-3 py-2 text-sm font-medium">My Tickets</button>
+                    
+                    <div class="relative inline-block text-left">
+                        <select id="lang-selector" onchange="changeLanguage(this.value)" class="bg-gray-50 border border-gray-300 text-gray-700 py-1.5 px-2.5 rounded-lg text-xs font-medium focus:ring-1 focus:ring-indigo-500 outline-none cursor-pointer">
+                            <option value="en">English (US)</option>
+                            <option value="sw">Kiswahili</option>
+                            <option value="es">Español</option>
+                        </select>
+                    </div>
+
                     <div id="auth-buttons"></div>
                 </div>
             </div>
@@ -34,50 +43,81 @@
 
     <header id="hero-section" class="bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 text-white py-16 px-4 text-center">
         <div class="max-w-3xl mx-auto">
-            <h1 class="text-4xl font-extrabold mb-4">How can we help you today?</h1>
-            <p class="text-indigo-200 mb-8">Search our knowledge base or submit a ticket to our support team.</p>
+            <h1 id="txt-hero-title" class="text-4xl font-extrabold mb-4">How can we help you today?</h1>
+            <p id="txt-hero-desc" class="text-indigo-200 mb-8">Search our knowledge base or submit a ticket to our support team.</p>
+            
+            <div class="relative max-w-xl mx-auto">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400"></i>
+                <input type="text" id="kb-search-input" onkeyup="filterArticles()" placeholder="Search articles by keywords (e.g., M-Pesa, Plans, Marketing)..." class="w-full pl-11 pr-4 py-3 rounded-xl bg-white text-gray-900 shadow-md placeholder-gray-400 outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+            </div>
         </div>
     </header>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-grow py-10 w-full">
         
         <section id="view-home" class="view-content">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Help Categories</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div onclick="loadArticle('getting-started.md')" class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
+            <h2 id="txt-cat-title" class="text-2xl font-bold mb-6 text-gray-800">Help Categories</h2>
+            
+            <div id="articles-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <div onclick="loadArticle('getting-started.md')" data-search="getting started account setup profile configuration free starter pro elite plans pricing" class="kb-card bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
                     <div class="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600 mb-4 group-hover:bg-indigo-600 group-hover:text-white transition">
                         <i class="fa-solid fa-rocket text-xl"></i>
                     </div>
-                    <h3 class="text-lg font-semibold mb-2">Getting Started</h3>
+                    <h3 class="text-lg font-semibold mb-2 card-title">Getting Started</h3>
                     <p class="text-gray-500 text-sm">Learn how to configure your account and setup your marketplace profile.</p>
                 </div>
-                <div onclick="loadArticle('payouts.md')" class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
+
+                <div onclick="loadArticle('pricing-plans.md')" data-search="pricing subscription tiers free starter pro elite cost upgrade premium features billing paypal mpesa" class="kb-card bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
+                    <div class="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center text-purple-600 mb-4 group-hover:bg-purple-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-tags text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2 card-title">Pricing & Subscriptions</h3>
+                    <p class="text-gray-500 text-sm">Explore Audiory plan features: Free ($0), Starter ($15), Pro ($39), and Elite ($65).</p>
+                </div>
+
+                <div onclick="loadArticle('payments-payouts.md')" data-search="payments payouts wallet mpesa paypal withdrawal licensing fees verification checkout deposit cashout" class="kb-card bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
                     <div class="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600 mb-4 group-hover:bg-emerald-600 group-hover:text-white transition">
                         <i class="fa-solid fa-wallet text-xl"></i>
                     </div>
-                    <h3 class="text-lg font-semibold mb-2">Payments & Payouts</h3>
-                    <p class="text-gray-500 text-sm">Understand licensing fees, withdrawal systems, and payment processing steps.</p>
+                    <h3 class="text-lg font-semibold mb-2 card-title">Payments & Payouts</h3>
+                    <p class="text-gray-500 text-sm">Understand licensing fees, withdrawal systems, and payment processing via M-Pesa & PayPal.</p>
                 </div>
-                <div onclick="loadArticle('licensing.md')" class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
+
+                <div onclick="loadArticle('marketing-campaigns.md')" data-search="marketing campaigns promotion producer dashboard visibility visibility tools advertising mpesa paypal traffic sales boost" class="kb-card bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
+                    <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 mb-4 group-hover:bg-blue-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-bullhorn text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2 card-title">Dashboard Marketing</h3>
+                    <p class="text-gray-500 text-sm">How to launch promotion campaigns from your dashboard using standard local and global payment gateways.</p>
+                </div>
+
+                <div onclick="loadArticle('licensing.md')" data-search="beat licensing contract configurations non-exclusive options exclusive rights law protection templates" class="kb-card bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
                     <div class="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center text-amber-600 mb-4 group-hover:bg-amber-600 group-hover:text-white transition">
                         <i class="fa-solid fa-scale-balanced text-xl"></i>
                     </div>
-                    <h3 class="text-lg font-semibold mb-2">Beat Licensing</h3>
+                    <h3 class="text-lg font-semibold mb-2 card-title">Beat Licensing</h3>
                     <p class="text-gray-500 text-sm">Information on contract configurations, non-exclusive options, and exclusive rights.</p>
                 </div>
+
+            </div>
+            
+            <div id="search-fallback" class="hidden text-center py-12 bg-white rounded-xl border border-dashed border-gray-300 mt-6">
+                <i class="fa-solid fa-magnifying-glass-blur text-gray-300 text-4xl mb-2"></i>
+                <p class="text-gray-500 font-medium">No help articles match your current search terms.</p>
             </div>
         </section>
 
         <section id="view-article" class="view-content hidden max-w-3xl mx-auto bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
             <button onclick="showView('home')" class="text-indigo-600 hover:text-indigo-800 font-medium mb-6 inline-flex items-center gap-2">
-                <i class="fa-solid fa-arrow-left"></i> Back to Help Categories
+                <i class="fa-solid fa-arrow-left"></i> <span class="txt-back-btn">Back to Help Categories</span>
             </button>
             <div id="article-content" class="markdown-body"></div>
         </section>
 
         <section id="view-tickets" class="view-content hidden">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Your Support Tickets</h2>
+                <h2 id="txt-ticket-header" class="text-2xl font-bold text-gray-800">Your Support Tickets</h2>
                 <button onclick="showView('create-ticket')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium shadow transition">
                     Create New Ticket
                 </button>
@@ -167,11 +207,72 @@
         let activeTicketsUnsubscribe = null;
         let subcollectionUnsubscribes = {};
 
+        // Localized dictionary matching choice tier
+        const dictionary = {
+            en: {
+                heroTitle: "How can we help you today?",
+                heroDesc: "Search our knowledge base or submit a ticket to our support team.",
+                catTitle: "Help Categories",
+                backBtn: "Back to Help Categories",
+                ticketHeader: "Your Support Tickets"
+            },
+            sw: {
+                heroTitle: "Tuna weza kukusaidia vipi leo?",
+                heroDesc: "Tafuta kwenye hifadhi yetu ya maarifa au wasilisha tikiti kwa timu ya usaidizi.",
+                catTitle: "Vitengo vya Usaidizi",
+                backBtn: "Rudi kwenye Vitengo vya Usaidizi",
+                ticketHeader: "Tikiti Zako za Usaidizi"
+            },
+            es: {
+                heroTitle: "¿Cómo podemos ayudarte hoy?",
+                heroDesc: "Busque en nuestra base de conocimientos o envíe un ticket a nuestro equipo.",
+                catTitle: "Categorías de Ayuda",
+                backBtn: "Volver a Categorías de Ayuda",
+                ticketHeader: "Sus Tickets de Soporte"
+            }
+        };
+
         window.sendUserReply = sendUserReply;
         window.toggleConversationThread = toggleConversationThread;
         window.showView = showView;
         window.loadArticle = loadArticle;
         window.toggleAuthMode = toggleAuthMode;
+        window.filterArticles = filterArticles;
+        window.changeLanguage = changeLanguage;
+
+        // Multi-Language Translation Evaluator
+        function changeLanguage(langCode) {
+            const translation = dictionary[langCode] || dictionary['en'];
+            document.getElementById('txt-hero-title').innerText = translation.heroTitle;
+            document.getElementById('txt-hero-desc').innerText = translation.heroDesc;
+            document.getElementById('txt-cat-title').innerText = translation.catTitle;
+            document.querySelectorAll('.txt-back-btn').forEach(el => el.innerText = translation.backBtn);
+            document.getElementById('txt-ticket-header').innerText = translation.ticketHeader;
+        }
+
+        // Real-time Text Query Filtration System
+        function filterArticles() {
+            const queryText = document.getElementById('kb-search-input').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.kb-card');
+            let visibleMatchesCount = 0;
+
+            cards.forEach(card => {
+                const searchCriteria = card.getAttribute('data-search').toLowerCase();
+                if (searchCriteria.includes(queryText)) {
+                    card.classList.remove('hidden');
+                    visibleMatchesCount++;
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            const fallbackAlert = document.getElementById('search-fallback');
+            if (visibleMatchesCount === 0) {
+                fallbackAlert.classList.remove('hidden');
+            } else {
+                fallbackAlert.classList.add('hidden');
+            }
+        }
 
         function showView(viewName) {
             document.querySelectorAll('.view-content').forEach(view => view.classList.add('hidden'));
@@ -295,7 +396,6 @@
             if (!currentUser) return;
 
             try {
-                // Securely query where user matching current session token rules
                 const q = query(
                     collection(db, "tickets"), 
                     where("userId", "==", currentUser.uid),
