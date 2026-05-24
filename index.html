@@ -1,1 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audiory Desk | Support Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        .markdown-body h1 { font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem; color: #111827; }
+        .markdown-body h2 { font-size: 1.4rem; font-weight: bold; margin-top: 1rem; margin-bottom: 0.5rem; color: #1f2937; }
+        .markdown-body p { margin-bottom: 1rem; color: #4b5563; line-height: 1.6; }
+        .markdown-body ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-900 min-h-screen flex flex-col">
 
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center space-x-2 cursor-pointer" onclick="showView('home')">
+                    <i class="fa-solid fa-headset text-indigo-600 text-2xl"></i>
+                    <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">Audiory Desk</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="showView('home')" class="text-gray-600 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Knowledge Base</button>
+                    <button onclick="showView('tickets')" class="text-gray-600 hover:text-indigo-600 px-3 py-2 text-sm font-medium">My Tickets</button>
+                    <div id="auth-buttons">
+                        </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header id="hero-section" class="bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 text-white py-16 px-4 text-center">
+        <div class="max-w-3xl mx-auto">
+            <h1 class="text-4xl font-extrabold mb-4">How can we help you today?</h1>
+            <p class="text-indigo-200 mb-8">Search our knowledge base or submit a ticket to our support team.</p>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-grow py-10 w-full">
+        
+        <section id="view-home" class="view-content">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Help Categories</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div onclick="loadArticle('getting-started.md')" class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
+                    <div class="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600 mb-4 group-hover:bg-indigo-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-rocket text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Getting Started</h3>
+                    <p class="text-gray-500 text-sm">Learn how to configure your account and setup your marketplace profile.</p>
+                </div>
+                <div onclick="loadArticle('payouts.md')" class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
+                    <div class="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600 mb-4 group-hover:bg-emerald-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-wallet text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Payments & Payouts</h3>
+                    <p class="text-gray-500 text-sm">Understand licensing fees, withdrawal systems, and payment processing steps.</p>
+                </div>
+                <div onclick="loadArticle('licensing.md')" class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
+                    <div class="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center text-amber-600 mb-4 group-hover:bg-amber-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-scale-balanced text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Beat Licensing</h3>
+                    <p class="text-gray-500 text-sm">Information on contract configurations, non-exclusive options, and exclusive rights.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-article" class="view-content hidden max-w-3xl mx-auto bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
+            <button onclick="showView('home')" class="text-indigo-600 hover:text-indigo-800 font-medium mb-6 inline-flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i> Back to Help Categories
+            </button>
+            <div id="article-content" class="markdown-body">
+                </div>
+        </section>
+
+        <section id="view-tickets" class="view-content hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Your Support Tickets</h2>
+                <button onclick="showView('create-ticket')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium shadow transition">
+                    Create New Ticket
+                </button>
+            </div>
+            <div id="tickets-list" class="space-y-4">
+                <p class="text-gray-500">Loading your support history...</p>
+            </div>
+        </section>
+
+        <section id="view-create-ticket" class="view-content hidden max-w-xl mx-auto bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Submit a Support Request</h2>
+            <form id="ticket-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+                    <input type="text" id="ticket-subject" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" placeholder="Briefly describe your issue">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <select id="ticket-category" class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                        <option value="Technical">Technical Error</option>
+                        <option value="Billing">Billing & Verification</option>
+                        <option value="General">General Inquiry</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Detailed Description</label>
+                    <textarea id="ticket-desc" rows="5" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" placeholder="Provide clear contextual details..."></textarea>
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition">Submit Ticket</button>
+            </form>
+        </section>
+
+        <section id="view-auth" class="view-content hidden max-w-md mx-auto bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
+            <h2 id="auth-title" class="text-2xl font-bold mb-6 text-center text-gray-800">Login to Audiory Desk</h2>
+            <form id="auth-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                    <input type="email" id="auth-email" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="auth-password" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                </div>
+                <button type="submit" id="auth-submit-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition">Login</button>
+            </form>
+            <p class="text-sm text-center text-gray-500 mt-4">
+                <span id="auth-toggle-text">Don't have an account?</span>
+                <button onclick="toggleAuthMode()" class="text-indigo-600 font-medium hover:underline focus:outline-none">Click here</button>
+            </p>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center text-sm text-gray-500">
+            &copy; 2026 Audiory Desk. Powered securely by Firebase & GitHub.
+        </div>
+    </footer>
+
+    <script type="module">
+        // Import Firebase modules using production CDN URLs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, query, where, getDocs, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // ==========================================
+        // 🛠️ CONFIGURATIONS (FILL IN YOUR VALUES)
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "YOUR_FIREBASE_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        const GITHUB_REPO_CONFIG = {
+            username: "YOUR_GITHUB_USERNAME",
+            repo: "YOUR_GITHUB_HELP_DESK_REPO_NAME",
+            branch: "main"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // App state tracking vars
+        let currentUser = null;
+        let isSignUpMode = false;
+
+        // ==========================================
+        // 🖥️ UI VIEW ROUTER NAVIGATION
+        // ==========================================
+        window.showView = function(viewName) {
+            document.querySelectorAll('.view-content').forEach(view => view.classList.add('hidden'));
+            document.getElementById('hero-section').classList.add('hidden');
+
+            if (viewName === 'home') {
+                document.getElementById('view-home').classList.remove('hidden');
+                document.getElementById('hero-section').classList.remove('hidden');
+            } else if (viewName === 'tickets') {
+                if (!currentUser) { showView('auth'); return; }
+                document.getElementById('view-tickets').classList.remove('hidden');
+                loadUserTickets();
+            } else if (viewName === 'create-ticket') {
+                if (!currentUser) { showView('auth'); return; }
+                document.getElementById('view-create-ticket').classList.remove('hidden');
+            } else if (viewName === 'auth') {
+                document.getElementById('view-auth').classList.remove('hidden');
+            } else if (viewName === 'article') {
+                document.getElementById('view-article').classList.remove('hidden');
+            }
+        }
+
+        // ==========================================
+        // 📚 GITHUB KNOWLEDGE BASE SYSTEM
+        // ==========================================
+        window.loadArticle = async function(fileName) {
+            showView('article');
+            const contentDiv = document.getElementById('article-content');
+            contentDiv.innerHTML = `<div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-indigo-600"></i><p class="text-gray-500 mt-2">Loading document from GitHub...</p></div>`;
+            
+            const rawUrl = `https://raw.githubusercontent.com/${GITHUB_REPO_CONFIG.username}/${GITHUB_REPO_CONFIG.repo}/${GITHUB_REPO_CONFIG.branch}/${fileName}`;
+            
+            try {
+                const response = await fetch(rawUrl);
+                if (!response.ok) throw new Error('Article markdown document not found in repo.');
+                const markdownText = await response.text();
+                contentDiv.innerHTML = marked.parse(markdownText);
+            } catch (err) {
+                contentDiv.innerHTML = `<div class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg"><i class="fa-solid fa-circle-exclamation mr-2"></i> Error: Unable to render help article. Check that file exists inside your target branch.</div>`;
+            }
+        }
+
+        // ==========================================
+        // 🔒 AUTHENTICATION MANAGEMENT
+        // ==========================================
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            const authButtonsDiv = document.getElementById('auth-buttons');
+            
+            if (user) {
+                authButtonsDiv.innerHTML = `
+                    <span class="text-xs font-medium text-gray-500 border border-gray-200 bg-gray-100 px-2.5 py-1 rounded-full mr-2 hidden md:inline">${user.email}</span>
+                    <button id="logout-btn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition">Logout</button>
+                `;
+                document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+                if (document.getElementById('view-auth').classList.contains('hidden') === false) {
+                    showView('tickets');
+                }
+            } else {
+                authButtonsDiv.innerHTML = `
+                    <button onclick="showView('auth')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow transition">Sign In</button>
+                `;
+                if (document.getElementById('view-tickets').classList.contains('hidden') === false || 
+                    document.getElementById('view-create-ticket').classList.contains('hidden') === false) {
+                    showView('auth');
+                }
+            }
+        });
+
+        window.toggleAuthMode = function() {
+            isSignUpMode = !isSignUpMode;
+            document.getElementById('auth-title').innerText = isSignUpMode ? "Create Audiory Account" : "Login to Audiory Desk";
+            document.getElementById('auth-submit-btn').innerText = isSignUpMode ? "Sign Up" : "Login";
+            document.getElementById('auth-toggle-text').innerText = isSignUpMode ? "Already have an account?" : "Don't have an account?";
+        }
+
+        document.getElementById('auth-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+
+            try {
+                if (isSignUpMode) {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                }
+                document.getElementById('auth-form').reset();
+            } catch (error) {
+                alert(error.message);
+            }
+        });
+
+        // ==========================================
+        // 🎫 FIRESTORE TICKETING SYSTEM
+        // ==========================================
+        document.getElementById('ticket-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUser) return;
+
+            const subject = document.getElementById('ticket-subject').value;
+            const category = document.getElementById('ticket-category').value;
+            const description = document.getElementById('ticket-desc').value;
+
+            try {
+                await addDoc(collection(db, "tickets"), {
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    subject: subject,
+                    category: category,
+                    description: description,
+                    status: "Open",
+                    createdAt: serverTimestamp()
+                });
+
+                document.getElementById('ticket-form').reset();
+                showView('tickets');
+            } catch (error) {
+                alert("Error saving your ticket details: " + error.message);
+            }
+        });
+
+        async function loadUserTickets() {
+            const listDiv = document.getElementById('tickets-list');
+            if (!currentUser) return;
+
+            try {
+                const q = query(
+                    collection(db, "tickets"), 
+                    where("userId", "==", currentUser.uid),
+                    orderBy("createdAt", "desc")
+                );
+                const querySnapshot = await getDocs(q);
+                
+                if (querySnapshot.empty) {
+                    listDiv.innerHTML = `
+                        <div class="text-center py-12 bg-white border border-gray-200 rounded-xl">
+                            <i class="fa-solid fa-folder-open text-gray-300 text-4xl mb-3"></i>
+                            <p class="text-gray-500 font-medium">You don't have any submitted support requests yet.</p>
+                        </div>`;
+                    return;
+                }
+
+                let html = "";
+                querySnapshot.forEach((doc) => {
+                    const ticket = doc.data();
+                    const statusColor = ticket.status === 'Open' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800';
+                    const dateFormatted = ticket.createdAt ? ticket.createdAt.toDate().toLocaleDateString() : 'Just now';
+                    
+                    html += `
+                        <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:border-gray-300 transition">
+                            <div class="flex flex-wrap justify-between items-start gap-2 mb-3">
+                                <div>
+                                    <span class="text-xs font-semibold uppercase tracking-wider text-gray-400 block mb-1">${ticket.category}</span>
+                                    <h3 class="text-lg font-bold text-gray-900">${ticket.subject}</h3>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${statusColor}">${ticket.status}</span>
+                            </div>
+                            <p class="text-gray-600 text-sm whitespace-pre-wrap mb-4 border-l-2 border-gray-200 pl-3">${ticket.description}</p>
+                            <div class="text-xs text-gray-400 flex items-center gap-2">
+                                <i class="fa-regular fa-clock"></i> Submitted on ${dateFormatted}
+                            </div>
+                        </div>
+                    `;
+                });
+                listDiv.innerHTML = html;
+            } catch (error) {
+                listDiv.innerHTML = `<p class="text-red-500">Error loading data components: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
