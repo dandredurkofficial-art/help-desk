@@ -108,6 +108,7 @@
         let activeTicketData = null;
         let unsubscribeReplies = null;
 
+        // Map function onto window globally for inline element accessibility
         window.openTicketThread = openTicketThread;
 
         onAuthStateChanged(auth, async (user) => {
@@ -175,16 +176,20 @@
                     const ticket = ticketDoc.data();
                     const isSelected = ticketDoc.id === activeTicketId ? 'bg-slate-700/60 border-l-4 border-indigo-500' : 'hover:bg-slate-700/30';
                     const statusDot = ticket.status === 'Open' ? 'text-amber-400' : 'text-emerald-400';
-                    const timeString = ticket.createdAt ? ticket.createdAt.toDate().toLocaleDateString() : 'Just Now';
+                    
+                    // Added dynamic field verification safeguards
+                    const safeEmail = ticket.userEmail || "No Email Provided";
+                    const safeSubject = ticket.subject || "Missing Subject Field";
+                    const safeDesc = ticket.description || "No detail tracking notes listed.";
 
                     html += `
                         <div onclick="openTicketThread('${ticketDoc.id}')" class="p-4 cursor-pointer transition ${isSelected} text-left">
                             <div class="flex justify-between items-start gap-2">
-                                <span class="text-[10px] font-bold text-slate-400 truncate max-w-[180px]">${ticket.userEmail || 'User'}</span>
-                                <span class="text-[10px] whitespace-nowrap ${statusDot} font-medium"><i class="fa-solid fa-circle text-[8px] mr-1"></i>${ticket.status}</span>
+                                <span class="text-[10px] font-bold text-slate-400 truncate max-w-[180px]">${safeEmail}</span>
+                                <span class="text-[10px] whitespace-nowrap ${statusDot} font-medium"><i class="fa-solid fa-circle text-[8px] mr-1"></i>${ticket.status || 'Open'}</span>
                             </div>
-                            <h4 class="text-sm font-bold text-white truncate mt-1">${ticket.subject}</h4>
-                            <p class="text-xs text-slate-400 truncate mt-0.5">${ticket.description}</p>
+                            <h4 class="text-sm font-bold text-white truncate mt-1">${safeSubject}</h4>
+                            <p class="text-xs text-slate-400 truncate mt-0.5">${safeDesc}</p>
                         </div>
                     `;
                 });
@@ -205,10 +210,11 @@
             const activeWindow = document.getElementById('chat-window-active');
             activeWindow.classList.remove('hidden');
 
-            document.getElementById('active-ticket-category').innerText = activeTicketData.category;
-            document.getElementById('active-ticket-subject').innerText = activeTicketData.subject;
-            document.getElementById('active-ticket-email').innerText = activeTicketData.userEmail || 'User';
-            document.getElementById('update-status-select').value = activeTicketData.status;
+            // Built-in absolute fallback triggers to shield old data rendering
+            document.getElementById('active-ticket-category').innerText = activeTicketData.category || "GENERAL";
+            document.getElementById('active-ticket-subject').innerText = activeTicketData.subject || "No Subject Context";
+            document.getElementById('active-ticket-email').innerText = activeTicketData.userEmail || "No Email Provided";
+            document.getElementById('update-status-select').value = activeTicketData.status || "Open";
 
             const repliesQuery = query(collection(db, "tickets", ticketId, "messages"), orderBy("timestamp", "asc"));
             
@@ -218,7 +224,7 @@
                 let feedHtml = `
                     <div class="bg-slate-800 p-4 border border-slate-700 rounded-xl max-w-[85%] text-left">
                         <p class="text-xs text-indigo-400 font-bold mb-1">Initial Issue Description</p>
-                        <p class="text-sm text-slate-200 whitespace-pre-wrap">${activeTicketData.description}</p>
+                        <p class="text-sm text-slate-200 whitespace-pre-wrap">${activeTicketData.description || ""}</p>
                     </div>
                 `;
 
@@ -231,13 +237,15 @@
                     feedHtml += `
                         <div class="${alignment} p-4 rounded-xl max-w-[85%] text-left shadow-sm">
                             <p class="text-[10px] font-bold text-indigo-300 uppercase tracking-wider mb-1">${label}</p>
-                            <p class="text-sm whitespace-pre-wrap">${msg.text}</p>
+                            <p class="text-sm whitespace-pre-wrap">${msg.text || ""}</p>
                         </div>
                     `;
                 });
 
                 feedDiv.innerHTML = feedHtml;
                 feedDiv.scrollTop = feedDiv.scrollHeight;
+            }, (error) => {
+                console.error("Snapshot error listener channel blocked:", error);
             });
         }
 
