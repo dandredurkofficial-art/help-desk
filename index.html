@@ -142,9 +142,6 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // ==========================================
-        // 🛠️ CONFIGURATIONS
-        // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyCmsFTjDryYOTddWfScTKsnrs0cWAHnpdc",
             authDomain: "audiory-beat-store.firebaseapp.com",
@@ -161,25 +158,22 @@
             branch: "main"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // App state tracking vars
         let currentUser = null;
         let isSignUpMode = false;
         let activeTicketsUnsubscribe = null;
         let subcollectionUnsubscribes = {};
 
-        // Make functions globally available for inline HTML click events
         window.sendUserReply = sendUserReply;
         window.toggleConversationThread = toggleConversationThread;
+        window.showView = showView;
+        window.loadArticle = loadArticle;
+        window.toggleAuthMode = toggleAuthMode;
 
-        // ==========================================
-        // 🖥️ UI VIEW ROUTER NAVIGATION
-        // ==========================================
-        window.showView = function(viewName) {
+        function showView(viewName) {
             document.querySelectorAll('.view-content').forEach(view => view.classList.add('hidden'));
             document.getElementById('hero-section').classList.add('hidden');
 
@@ -200,10 +194,7 @@
             }
         }
 
-        // ==========================================
-        // 📚 GITHUB KNOWLEDGE BASE SYSTEM
-        // ==========================================
-        window.loadArticle = async function(fileName) {
+        async function loadArticle(fileName) {
             showView('article');
             const contentDiv = document.getElementById('article-content');
             contentDiv.innerHTML = `<div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-indigo-600"></i><p class="text-gray-500 mt-2">Loading document from GitHub...</p></div>`;
@@ -216,13 +207,10 @@
                 const markdownText = await response.text();
                 contentDiv.innerHTML = marked.parse(markdownText);
             } catch (err) {
-                contentDiv.innerHTML = `<div class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg"><i class="fa-solid fa-circle-exclamation mr-2"></i> Error: Unable to render help article. Check that file exists inside your target branch.</div>`;
+                contentDiv.innerHTML = `<div class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg"><i class="fa-solid fa-circle-exclamation mr-2"></i> Error: Unable to render help article.</div>`;
             }
         }
 
-        // ==========================================
-        // 🔒 AUTHENTICATION MANAGEMENT
-        // ==========================================
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
             const authButtonsDiv = document.getElementById('auth-buttons');
@@ -233,27 +221,26 @@
                     <button id="logout-btn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition">Logout</button>
                 `;
                 document.getElementById('logout-btn').addEventListener('click', () => {
-                    // Clean up active snapshot bindings upon sign-out profiles action
                     if (activeTicketsUnsubscribe) activeTicketsUnsubscribe();
                     Object.values(subcollectionUnsubscribes).forEach(unsub => unsub());
                     subcollectionUnsubscribes = {};
                     signOut(auth);
                 });
-                if (document.getElementById('view-auth').classList.contains('hidden') === false) {
+                if (!document.getElementById('view-auth').classList.contains('hidden')) {
                     showView('tickets');
                 }
             } else {
                 authButtonsDiv.innerHTML = `
                     <button onclick="showView('auth')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow transition">Sign In</button>
                 `;
-                if (document.getElementById('view-tickets').classList.contains('hidden') === false || 
-                    document.getElementById('view-create-ticket').classList.contains('hidden') === false) {
+                if (!document.getElementById('view-tickets').classList.contains('hidden') || 
+                    !document.getElementById('view-create-ticket').classList.contains('hidden')) {
                     showView('auth');
                 }
             }
         });
 
-        window.toggleAuthMode = function() {
+        function toggleAuthMode() {
             isSignUpMode = !isSignUpMode;
             document.getElementById('auth-title').innerText = isSignUpMode ? "Create Audiory Account" : "Login to Audiory Desk";
             document.getElementById('auth-submit-btn').innerText = isSignUpMode ? "Sign Up" : "Login";
@@ -277,9 +264,6 @@
             }
         });
 
-        // ==========================================
-        // 🎫 FIRESTORE TICKETING SYSTEM
-        // ==========================================
         document.getElementById('ticket-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             if (!currentUser) return;
@@ -289,7 +273,6 @@
             const description = document.getElementById('ticket-desc').value;
 
             try {
-                // Modified to pass userEmail context field down explicitly 
                 await addDoc(collection(db, "tickets"), {
                     userId: currentUser.uid,
                     userEmail: currentUser.email,
@@ -312,6 +295,7 @@
             if (!currentUser) return;
 
             try {
+                // Securely query where user matching current session token rules
                 const q = query(
                     collection(db, "tickets"), 
                     where("userId", "==", currentUser.uid),
@@ -320,7 +304,6 @@
 
                 if (activeTicketsUnsubscribe) activeTicketsUnsubscribe();
 
-                // Live dynamic real-time snap loop updates container
                 activeTicketsUnsubscribe = onSnapshot(q, (querySnapshot) => {
                     if (querySnapshot.empty) {
                         listDiv.innerHTML = `
@@ -352,11 +335,11 @@
                                 <div id="msg-thread-${ticketId}" class="mt-4 pt-4 border-t border-gray-100 space-y-2 hidden">
                                     <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2"><i class="fa-solid fa-comments text-indigo-500 mr-1"></i> Messages Feed</h4>
                                     <div id="msg-feed-${ticketId}" class="space-y-2 max-h-60 overflow-y-auto pr-2">
-                                        <p class="text-xs text-gray-400 italic">Connecting to secure log channels...</p>
+                                        <p class="text-xs text-gray-400 italic">Connecting...</p>
                                     </div>
                                     
                                     <div class="flex gap-2 mt-3 pt-2">
-                                        <input type="text" id="input-reply-${ticketId}" placeholder="Write a response back to support team..." class="flex-grow border border-gray-300 rounded-lg p-2 text-xs outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500">
+                                        <input type="text" id="input-reply-${ticketId}" placeholder="Write a response back to support team..." class="flex-grow border border-gray-300 rounded-lg p-2 text-xs outline-none focus:ring-1 focus:ring-indigo-500">
                                         <button onclick="sendUserReply('${ticketId}')" class="bg-indigo-600 text-white text-xs px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition">Send</button>
                                     </div>
                                 </div>
@@ -369,23 +352,18 @@
                                 </div>
                             </div>
                         `;
-                        
-                        // Launch real-time stream execution listener loops against nested messages data subcollections
                         listenToTicketMessages(ticketId);
                     });
                     listDiv.innerHTML = html;
                 }, (error) => {
-                    listDiv.innerHTML = `<p class="text-red-500">Error rendering records queue frame data: ${error.message}</p>`;
+                    listDiv.innerHTML = `<p class="text-red-500">Error rendering data: ${error.message}</p>`;
                 });
 
             } catch (error) {
-                listDiv.innerHTML = `<p class="text-red-500">Error loading data components: ${error.message}</p>`;
+                listDiv.innerHTML = `<p class="text-red-500">Error loading components: ${error.message}</p>`;
             }
         }
 
-        // ==========================================
-        // 💬 LIVE MESSAGES FEED PIPELINES
-        // ==========================================
         function listenToTicketMessages(ticketId) {
             if (subcollectionUnsubscribes[ticketId]) subcollectionUnsubscribes[ticketId]();
 
@@ -396,7 +374,7 @@
                 if (!feedContainer) return;
 
                 if (snapshot.empty) {
-                    feedContainer.innerHTML = `<p class="text-xs text-gray-400 italic bg-gray-50 p-3 rounded-lg border border-dashed">No responses yet. Our team will read your log issue data details and issue responses shortly.</p>`;
+                    feedContainer.innerHTML = `<p class="text-xs text-gray-400 italic bg-gray-50 p-3 rounded-lg border border-dashed">No responses yet. Our team will review your ticket shortly.</p>`;
                     return;
                 }
 
@@ -437,10 +415,9 @@
                 });
                 inputField.value = "";
             } catch (err) {
-                alert("Failed to deliver your message response text: " + err.message);
+                alert("Failed to deliver message: " + err.message);
             }
         }
-
     </script>
 </body>
 </html>
