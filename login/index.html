@@ -36,21 +36,19 @@
     /* Absolute positioned Brand Logo Header */
     .brand-header {
       position: absolute;
-      top: 24px;
-      left: 32px;
+      top: 28px;
+      left: 36px;
       z-index: 10;
     }
 
     .brand-logo {
       display: flex;
       align-items: center;
-      gap: 10px;
       text-decoration: none;
-      color: #ffffff;
     }
 
     .brand-logo svg {
-      height: 36px;
+      height: 34px;
       width: auto;
       display: block;
     }
@@ -298,11 +296,18 @@
 
   <header class="brand-header">
     <a href="/" class="brand-logo" aria-label="Audiory Home">
-      <svg viewBox="0 0 160 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 28C6.47715 28 2 23.5228 2 18C2 12.4772 6.47715 8 12 8C17.5228 8 22 12.4772 22 18C22 23.5228 17.5228 28 12 28Z" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-        <path d="M8 21V15L12 11L16 15V21" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M12 11V23" stroke="#818cf8" stroke-width="2.5" stroke-linecap="round"/>
-        <text x="34" y="25" fill="white" font-family="system-ui, sans-serif" font-size="20" font-weight="800" letter-spacing="-0.5">Audiory</text>
+      <svg viewBox="0 0 180 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g transform="translate(2, 2)">
+          <circle cx="18" cy="18" r="16" stroke="white" stroke-width="2.5" opacity="0.25"/>
+          <circle cx="18" cy="18" r="11" stroke="white" stroke-width="1.5" stroke-dasharray="3 2" opacity="0.4"/>
+          <path d="M11 25V17" stroke="white" stroke-width="3" stroke-linecap="round"/>
+          <path d="M14 25V13" stroke="white" stroke-width="3" stroke-linecap="round"/>
+          <path d="M18 25V9" stroke="#818cf8" stroke-width="3" stroke-linecap="round"/>
+          <path d="M22 25V13" stroke="white" stroke-width="3" stroke-linecap="round"/>
+          <path d="M25 25V17" stroke="white" stroke-width="3" stroke-linecap="round"/>
+          <path d="M14 18H22" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.9"/>
+        </g>
+        <text x="44" y="26" fill="white" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="900" letter-spacing="-0.5">audiory</text>
       </svg>
     </a>
   </header>
