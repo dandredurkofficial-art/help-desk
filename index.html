@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
-        .markdown-body h1 { font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem; color: #111827; }
-        .markdown-body h2 { font-size: 1.4rem; font-weight: bold; margin-top: 1rem; margin-bottom: 0.5rem; color: #1f2937; }
-        .markdown-body p { margin-bottom: 1rem; color: #4b5563; line-height: 1.6; }
+        .markdown-body h1 { font-size: 1.6rem; font-weight: bold; margin-bottom: 1rem; color: #111827; }
+        .markdown-body h2 { font-size: 1.3rem; font-weight: bold; margin-top: 1rem; margin-bottom: 0.5rem; color: #1f2937; }
+        .markdown-body p { margin-bottom: 1rem; color: #4b5563; line-height: 1.6; font-size: 0.95rem; }
         .markdown-body ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; }
     </style>
 </head>
@@ -20,159 +20,178 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <div class="flex items-center space-x-2 cursor-pointer" onclick="showView('home')">
-                    <i class="fa-solid fa-headset text-indigo-600 text-2xl"></i>
-                    <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">Audiory Desk</span>
+                    <i class="fa-solid fa-headset text-indigo-600 text-xl sm:text-2xl"></i>
+                    <span class="text-lg sm:text-xl font-bold tracking-tight bg-gradient-to-r from-indigo-600 to-violet-600 bg-clip-text text-transparent">Audiory Desk</span>
                 </div>
-                <div class="flex items-center space-x-4">
+                
+                <div class="hidden md:flex items-center space-x-4">
                     <button onclick="showView('home')" class="text-gray-600 hover:text-indigo-600 px-3 py-2 text-sm font-medium">Knowledge Base</button>
                     <button onclick="showView('tickets')" class="text-gray-600 hover:text-indigo-600 px-3 py-2 text-sm font-medium">My Tickets</button>
                     
                     <div class="relative inline-block text-left">
-                        <select id="lang-selector" onchange="changeLanguage(this.value)" class="bg-gray-50 border border-gray-300 text-gray-700 py-1.5 px-2.5 rounded-lg text-xs font-medium focus:ring-1 focus:ring-indigo-500 outline-none cursor-pointer">
+                        <select onchange="changeLanguage(this.value)" class="lang-selector bg-gray-50 border border-gray-300 text-gray-700 py-1.5 px-2.5 rounded-lg text-xs font-medium focus:ring-1 focus:ring-indigo-500 outline-none cursor-pointer">
                             <option value="en">English (US)</option>
                             <option value="sw">Kiswahili</option>
                             <option value="es">Español</option>
                         </select>
                     </div>
+                    <div class="auth-buttons flex items-center"></div>
+                </div>
 
-                    <div id="auth-buttons"></div>
+                <div class="flex md:hidden items-center space-x-2">
+                    <div class="relative inline-block text-left mr-1">
+                        <select onchange="changeLanguage(this.value)" class="lang-selector bg-gray-50 border border-gray-300 text-gray-700 py-1 px-1.5 rounded-md text-xs font-medium focus:ring-1 focus:ring-indigo-500 outline-none">
+                            <option value="en">EN</option>
+                            <option value="sw">SW</option>
+                            <option value="es">ES</option>
+                        </select>
+                    </div>
+                    <button onclick="toggleMobileMenu()" class="text-gray-600 hover:text-indigo-600 focus:outline-none p-2">
+                        <i id="menu-icon" class="fa-solid fa-bars text-xl"></i>
+                    </button>
                 </div>
             </div>
         </div>
+
+        <div id="mobile-menu" class="hidden md:hidden border-t border-gray-100 bg-white px-4 pt-2 pb-4 space-y-2 shadow-inner">
+            <button onclick="showView('home'); toggleMobileMenu();" class="block w-full text-left text-gray-600 hover:text-indigo-600 py-2 text-sm font-medium">Knowledge Base</button>
+            <button onclick="showView('tickets'); toggleMobileMenu();" class="block w-full text-left text-gray-600 hover:text-indigo-600 py-2 text-sm font-medium">My Tickets</button>
+            <div class="auth-buttons-mobile pt-2 border-t border-gray-100"></div>
+        </div>
     </nav>
 
-    <header id="hero-section" class="bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 text-white py-16 px-4 text-center">
+    <header id="hero-section" class="bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 text-white py-12 px-4 sm:py-16 text-center">
         <div class="max-w-3xl mx-auto">
-            <h1 id="txt-hero-title" class="text-4xl font-extrabold mb-4">How can we help you today?</h1>
-            <p id="txt-hero-desc" class="text-indigo-200 mb-8">Search our knowledge base or submit a ticket to our support team.</p>
+            <h1 id="txt-hero-title" class="text-2xl sm:text-4xl font-extrabold mb-3 tracking-tight">How can we help you today?</h1>
+            <p id="txt-hero-desc" class="text-sm sm:text-base text-indigo-200 mb-6 max-w-xl mx-auto">Search our knowledge base or submit a ticket to our support team.</p>
             
             <div class="relative max-w-xl mx-auto">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400"></i>
-                <input type="text" id="kb-search-input" onkeyup="filterArticles()" placeholder="Search articles by keywords (e.g., M-Pesa, Plans, Marketing)..." class="w-full pl-11 pr-4 py-3 rounded-xl bg-white text-gray-900 shadow-md placeholder-gray-400 outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
+                <input type="text" id="kb-search-input" onkeyup="filterArticles()" placeholder="Search keywords (e.g., M-Pesa, Plans, Marketing)..." class="w-full pl-11 pr-4 py-3 rounded-xl bg-white text-gray-900 shadow-md placeholder-gray-400 outline-none focus:ring-2 focus:ring-indigo-500 text-sm">
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-grow py-10 w-full">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-grow py-6 sm:py-10 w-full">
         
         <section id="view-home" class="view-content">
-            <h2 id="txt-cat-title" class="text-2xl font-bold mb-6 text-gray-800">Help Categories</h2>
+            <h2 id="txt-cat-title" class="text-xl sm:text-2xl font-bold mb-5 text-gray-800">Help Categories</h2>
             
-            <div id="articles-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div id="articles-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
                 
-                <div onclick="loadArticle('getting-started.md')" data-search="getting started account setup profile configuration free starter pro elite plans pricing" class="kb-card bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
-                    <div class="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600 mb-4 group-hover:bg-indigo-600 group-hover:text-white transition">
-                        <i class="fa-solid fa-rocket text-xl"></i>
+                <div onclick="loadArticle('getting-started.md')" data-search="getting started account setup profile configuration free starter pro elite plans pricing" class="kb-card bg-white p-5 sm:p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600 mb-3.5 group-hover:bg-indigo-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-rocket text-lg sm:text-xl"></i>
                     </div>
-                    <h3 class="text-lg font-semibold mb-2 card-title">Getting Started</h3>
-                    <p class="text-gray-500 text-sm">Learn how to configure your account and setup your marketplace profile.</p>
+                    <h3 class="text-base sm:text-lg font-semibold mb-1.5 card-title">Getting Started</h3>
+                    <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">Learn how to configure your account and setup your marketplace profile.</p>
                 </div>
 
-                <div onclick="loadArticle('pricing-plans.md')" data-search="pricing subscription tiers free starter pro elite cost upgrade premium features billing paypal mpesa" class="kb-card bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
-                    <div class="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center text-purple-600 mb-4 group-hover:bg-purple-600 group-hover:text-white transition">
-                        <i class="fa-solid fa-tags text-xl"></i>
+                <div onclick="loadArticle('pricing-plans.md')" data-search="pricing subscription tiers free starter pro elite cost upgrade premium features billing paypal mpesa" class="kb-card bg-white p-5 sm:p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-purple-50 rounded-lg flex items-center justify-center text-purple-600 mb-3.5 group-hover:bg-purple-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-tags text-lg sm:text-xl"></i>
                     </div>
-                    <h3 class="text-lg font-semibold mb-2 card-title">Pricing & Subscriptions</h3>
-                    <p class="text-gray-500 text-sm">Explore Audiory plan features: Free ($0), Starter ($15), Pro ($39), and Elite ($65).</p>
+                    <h3 class="text-base sm:text-lg font-semibold mb-1.5 card-title">Pricing & Subscriptions</h3>
+                    <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">Explore Audiory plan features: Free ($0), Starter ($15), Pro ($39), and Elite ($65).</p>
                 </div>
 
-                <div onclick="loadArticle('payments-payouts.md')" data-search="payments payouts wallet mpesa paypal withdrawal licensing fees verification checkout deposit cashout" class="kb-card bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
-                    <div class="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600 mb-4 group-hover:bg-emerald-600 group-hover:text-white transition">
-                        <i class="fa-solid fa-wallet text-xl"></i>
+                <div onclick="loadArticle('payments-payouts.md')" data-search="payments payouts wallet mpesa paypal withdrawal licensing fees verification checkout deposit cashout" class="kb-card bg-white p-5 sm:p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600 mb-3.5 group-hover:bg-emerald-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-wallet text-lg sm:text-xl"></i>
                     </div>
-                    <h3 class="text-lg font-semibold mb-2 card-title">Payments & Payouts</h3>
-                    <p class="text-gray-500 text-sm">Understand licensing fees, withdrawal systems, and payment processing via M-Pesa & PayPal.</p>
+                    <h3 class="text-base sm:text-lg font-semibold mb-1.5 card-title">Payments & Payouts</h3>
+                    <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">Understand licensing fees, withdrawal systems, and payment processing via M-Pesa & PayPal.</p>
                 </div>
 
-                <div onclick="loadArticle('marketing-campaigns.md')" data-search="marketing campaigns promotion producer dashboard visibility visibility tools advertising mpesa paypal traffic sales boost" class="kb-card bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
-                    <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 mb-4 group-hover:bg-blue-600 group-hover:text-white transition">
-                        <i class="fa-solid fa-bullhorn text-xl"></i>
+                <div onclick="loadArticle('marketing-campaigns.md')" data-search="marketing campaigns promotion producer dashboard visibility visibility tools advertising mpesa paypal traffic sales boost" class="kb-card bg-white p-5 sm:p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 mb-3.5 group-hover:bg-blue-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-bullhorn text-lg sm:text-xl"></i>
                     </div>
-                    <h3 class="text-lg font-semibold mb-2 card-title">Dashboard Marketing</h3>
-                    <p class="text-gray-500 text-sm">How to launch promotion campaigns from your dashboard using standard local and global payment gateways.</p>
+                    <h3 class="text-base sm:text-lg font-semibold mb-1.5 card-title">Dashboard Marketing</h3>
+                    <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">How to launch promotion campaigns from your dashboard using standard local and global payment gateways.</p>
                 </div>
 
-                <div onclick="loadArticle('licensing.md')" data-search="beat licensing contract configurations non-exclusive options exclusive rights law protection templates" class="kb-card bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
-                    <div class="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center text-amber-600 mb-4 group-hover:bg-amber-600 group-hover:text-white transition">
-                        <i class="fa-solid fa-scale-balanced text-xl"></i>
+                <div onclick="loadArticle('licensing.md')" data-search="beat licensing contract configurations non-exclusive options exclusive rights law protection templates" class="kb-card bg-white p-5 sm:p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition cursor-pointer group">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-amber-50 rounded-lg flex items-center justify-center text-amber-600 mb-3.5 group-hover:bg-amber-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-scale-balanced text-lg sm:text-xl"></i>
                     </div>
-                    <h3 class="text-lg font-semibold mb-2 card-title">Beat Licensing</h3>
-                    <p class="text-gray-500 text-sm">Information on contract configurations, non-exclusive options, and exclusive rights.</p>
+                    <h3 class="text-base sm:text-lg font-semibold mb-1.5 card-title">Beat Licensing</h3>
+                    <p class="text-gray-500 text-xs sm:text-sm leading-relaxed">Information on contract configurations, non-exclusive options, and exclusive rights.</p>
                 </div>
 
             </div>
             
-            <div id="search-fallback" class="hidden text-center py-12 bg-white rounded-xl border border-dashed border-gray-300 mt-6">
-                <i class="fa-solid fa-magnifying-glass-blur text-gray-300 text-4xl mb-2"></i>
-                <p class="text-gray-500 font-medium">No help articles match your current search terms.</p>
+            <div id="search-fallback" class="hidden text-center py-10 bg-white rounded-xl border border-dashed border-gray-300 mt-6 px-4">
+                <i class="fa-solid fa-magnifying-glass-blur text-gray-300 text-3xl mb-2"></i>
+                <p class="text-gray-500 text-sm font-medium">No help articles match your current search terms.</p>
             </div>
         </section>
 
-        <section id="view-article" class="view-content hidden max-w-3xl mx-auto bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
-            <button onclick="showView('home')" class="text-indigo-600 hover:text-indigo-800 font-medium mb-6 inline-flex items-center gap-2">
+        <section id="view-article" class="view-content hidden max-w-3xl mx-auto bg-white p-5 sm:p-8 rounded-xl border border-gray-200 shadow-sm">
+            <button onclick="showView('home')" class="text-indigo-600 hover:text-indigo-800 font-medium mb-5 inline-flex items-center gap-2 text-sm">
                 <i class="fa-solid fa-arrow-left"></i> <span class="txt-back-btn">Back to Help Categories</span>
             </button>
-            <div id="article-content" class="markdown-body"></div>
+            <div id="article-content" class="markdown-body text-sm sm:text-base"></div>
         </section>
 
         <section id="view-tickets" class="view-content hidden">
-            <div class="flex justify-between items-center mb-6">
-                <h2 id="txt-ticket-header" class="text-2xl font-bold text-gray-800">Your Support Tickets</h2>
-                <button onclick="showView('create-ticket')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium shadow transition">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+                <h2 id="txt-ticket-header" class="text-xl sm:text-2xl font-bold text-gray-800">Your Support Tickets</h2>
+                <button onclick="showView('create-ticket')" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium shadow transition text-center">
                     Create New Ticket
                 </button>
             </div>
             <div id="tickets-list" class="space-y-4">
-                <p class="text-gray-500">Loading your support history...</p>
+                <p class="text-gray-500 text-sm">Loading your support history...</p>
             </div>
         </section>
 
-        <section id="view-create-ticket" class="view-content hidden max-w-xl mx-auto bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
-            <h2 class="text-2xl font-bold mb-6 text-gray-800">Submit a Support Request</h2>
-            <form id="ticket-form" class="space-y-4">
+        <section id="view-create-ticket" class="view-content hidden max-w-xl mx-auto bg-white p-5 sm:p-8 rounded-xl border border-gray-200 shadow-sm">
+            <h2 class="text-xl sm:text-2xl font-bold mb-5 text-gray-800">Submit a Support Request</h2>
+            <form id="ticket-form" class="space-y-4 text-sm">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Subject</label>
-                    <input type="text" id="ticket-subject" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" placeholder="Briefly describe your issue">
+                    <label class="block font-medium text-gray-700 mb-1">Subject</label>
+                    <input type="text" id="ticket-subject" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm" placeholder="Briefly describe your issue">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                    <select id="ticket-category" class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                    <label class="block font-medium text-gray-700 mb-1">Category</label>
+                    <select id="ticket-category" class="w-full border border-gray-300 rounded-lg p-2.5 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm">
                         <option value="Technical">Technical Error</option>
                         <option value="Billing">Billing & Verification</option>
                         <option value="General">General Inquiry</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Detailed Description</label>
-                    <textarea id="ticket-desc" rows="5" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" placeholder="Provide clear contextual details..."></textarea>
+                    <label class="block font-medium text-gray-700 mb-1">Detailed Description</label>
+                    <textarea id="ticket-desc" rows="5" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm" placeholder="Provide clear contextual details..."></textarea>
                 </div>
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition">Submit Ticket</button>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-lg shadow transition">Submit Ticket</button>
             </form>
         </section>
 
-        <section id="view-auth" class="view-content hidden max-w-md mx-auto bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
-            <h2 id="auth-title" class="text-2xl font-bold mb-6 text-center text-gray-800">Login to Audiory Desk</h2>
-            <form id="auth-form" class="space-y-4">
+        <section id="view-auth" class="view-content hidden max-w-md mx-auto bg-white p-5 sm:p-8 rounded-xl border border-gray-200 shadow-sm">
+            <h2 id="auth-title" class="text-xl sm:text-2xl font-bold mb-5 text-center text-gray-800">Login to Audiory Desk</h2>
+            <form id="auth-form" class="space-y-4 text-sm">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                    <input type="email" id="auth-email" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                    <label class="block font-medium text-gray-700 mb-1">Email Address</label>
+                    <input type="email" id="auth-email" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <input type="password" id="auth-password" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none">
+                    <label class="block font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="auth-password" required class="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm">
                 </div>
-                <button type="submit" id="auth-submit-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition">Login</button>
+                <button type="submit" id="auth-submit-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-lg shadow transition">Login</button>
             </form>
-            <p class="text-sm text-center text-gray-500 mt-4">
+            <p class="text-xs sm:text-sm text-center text-gray-500 mt-4">
                 <span id="auth-toggle-text">Don't have an account?</span>
-                <button onclick="toggleAuthMode()" class="text-indigo-600 font-medium hover:underline focus:outline-none">Click here</button>
+                <button onclick="toggleAuthMode()" class="text-indigo-600 font-medium hover:underline focus:outline-none ml-1">Click here</button>
             </p>
         </section>
 
     </main>
 
     <footer class="bg-white border-t border-gray-200 py-6 mt-12">
-        <div class="max-w-7xl mx-auto px-4 text-center text-sm text-gray-500">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs sm:text-sm text-gray-500">
             &copy; 2026 Audiory Desk. Powered securely by Audiory.
         </div>
     </footer>
@@ -180,10 +199,10 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot, serverTimestamp, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "AIzaSyCmsFTjDryYOTddWfScTKsnrs0cWAHnpdc",
+            apiKey: "AIzaSyCmsFTJdryYOTddWfScTKsnrs0cWAHnpdc",
             authDomain: "audiory-beat-store.firebaseapp.com",
             projectId: "audiory-beat-store",
             storageBucket: "audiory-beat-store.firebasestorage.app",
@@ -207,7 +226,6 @@
         let activeTicketsUnsubscribe = null;
         let subcollectionUnsubscribes = {};
 
-        // Localized dictionary matching choice tier
         const dictionary = {
             en: {
                 heroTitle: "How can we help you today?",
@@ -217,7 +235,7 @@
                 ticketHeader: "Your Support Tickets"
             },
             sw: {
-                heroTitle: "Tuna weza kukusaidia vipi leo?",
+                heroTitle: "Tunaweza kukusaidia vipi leo?",
                 heroDesc: "Tafuta kwenye hifadhi yetu ya maarifa au wasilisha tikiti kwa timu ya usaidizi.",
                 catTitle: "Vitengo vya Usaidizi",
                 backBtn: "Rudi kwenye Vitengo vya Usaidizi",
@@ -239,8 +257,23 @@
         window.toggleAuthMode = toggleAuthMode;
         window.filterArticles = filterArticles;
         window.changeLanguage = changeLanguage;
+        window.toggleMobileMenu = toggleMobileMenu;
 
-        // Multi-Language Translation Evaluator
+        // Mobile Nav Drawer Toggle Logic
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('menu-icon');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-xmark');
+            } else {
+                menu.classList.add('hidden');
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-bars');
+            }
+        }
+
         function changeLanguage(langCode) {
             const translation = dictionary[langCode] || dictionary['en'];
             document.getElementById('txt-hero-title').innerText = translation.heroTitle;
@@ -248,9 +281,13 @@
             document.getElementById('txt-cat-title').innerText = translation.catTitle;
             document.querySelectorAll('.txt-back-btn').forEach(el => el.innerText = translation.backBtn);
             document.getElementById('txt-ticket-header').innerText = translation.ticketHeader;
+            
+            // Sync both select lists across device orientations
+            document.querySelectorAll('.lang-selector').forEach(select => {
+                select.value = langCode;
+            });
         }
 
-        // Real-time Text Query Filtration System
         function filterArticles() {
             const queryText = document.getElementById('kb-search-input').value.toLowerCase().trim();
             const cards = document.querySelectorAll('.kb-card');
@@ -293,12 +330,13 @@
             } else if (viewName === 'article') {
                 document.getElementById('view-article').classList.remove('hidden');
             }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         async function loadArticle(fileName) {
             showView('article');
             const contentDiv = document.getElementById('article-content');
-            contentDiv.innerHTML = `<div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-2xl text-indigo-600"></i><p class="text-gray-500 mt-2">Loading document from GitHub...</p></div>`;
+            contentDiv.innerHTML = `<div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-xl text-indigo-600"></i><p class="text-gray-500 text-xs mt-2">Loading document from GitHub...</p></div>`;
             
             const rawUrl = `https://raw.githubusercontent.com/${GITHUB_REPO_CONFIG.username}/${GITHUB_REPO_CONFIG.repo}/${GITHUB_REPO_CONFIG.branch}/${fileName}`;
             
@@ -308,32 +346,45 @@
                 const markdownText = await response.text();
                 contentDiv.innerHTML = marked.parse(markdownText);
             } catch (err) {
-                contentDiv.innerHTML = `<div class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg"><i class="fa-solid fa-circle-exclamation mr-2"></i> Error: Unable to render help article.</div>`;
+                contentDiv.innerHTML = `<div class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg text-xs"><i class="fa-solid fa-circle-exclamation mr-2"></i> Error: Unable to render help article.</div>`;
             }
         }
 
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
-            const authButtonsDiv = document.getElementById('auth-buttons');
+            const authDesktop = document.querySelector('.md\\:flex .auth-buttons');
+            const authMobile = document.querySelector('.auth-buttons-mobile');
             
             if (user) {
-                authButtonsDiv.innerHTML = `
-                    <span class="text-xs font-medium text-gray-500 border border-gray-200 bg-gray-100 px-2.5 py-1 rounded-full mr-2 hidden md:inline">${user.email}</span>
-                    <button id="logout-btn" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition">Logout</button>
+                const desktopMarkup = `
+                    <span class="text-xs font-medium text-gray-500 border border-gray-200 bg-gray-100 px-2.5 py-1 rounded-full mr-2 max-w-[140px] truncate">${user.email}</span>
+                    <button id="logout-btn-desktop" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1.5 rounded-lg text-xs font-medium transition">Logout</button>
                 `;
-                document.getElementById('logout-btn').addEventListener('click', () => {
+                const mobileMarkup = `
+                    <p class="text-xs font-semibold text-gray-400 mb-2 truncate px-1">${user.email}</p>
+                    <button id="logout-btn-mobile" class="w-full bg-gray-100 text-gray-700 py-2 rounded-lg text-sm font-medium transition text-center">Logout</button>
+                `;
+                
+                if(authDesktop) authDesktop.innerHTML = desktopMarkup;
+                if(authMobile) authMobile.innerHTML = mobileMarkup;
+
+                const handleSignOut = () => {
                     if (activeTicketsUnsubscribe) activeTicketsUnsubscribe();
                     Object.values(subcollectionUnsubscribes).forEach(unsub => unsub());
                     subcollectionUnsubscribes = {};
                     signOut(auth);
-                });
+                };
+
+                document.getElementById('logout-btn-desktop')?.addEventListener('click', handleSignOut);
+                document.getElementById('logout-btn-mobile')?.addEventListener('click', () => { handleSignOut(); toggleMobileMenu(); });
+
                 if (!document.getElementById('view-auth').classList.contains('hidden')) {
                     showView('tickets');
                 }
             } else {
-                authButtonsDiv.innerHTML = `
-                    <button onclick="showView('auth')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow transition">Sign In</button>
-                `;
+                if(authDesktop) authDesktop.innerHTML = `<button onclick="showView('auth')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-medium shadow transition">Sign In</button>`;
+                if(authMobile) authMobile.innerHTML = `<button onclick="showView('auth'); toggleMobileMenu();" class="w-full bg-indigo-600 text-white py-2 rounded-lg text-sm font-medium shadow transition text-center">Sign In</button>`;
+                
                 if (!document.getElementById('view-tickets').classList.contains('hidden') || 
                     !document.getElementById('view-create-ticket').classList.contains('hidden')) {
                     showView('auth');
@@ -381,7 +432,8 @@
                     category: category,
                     description: description,
                     status: "Open",
-                    createdAt: serverTimestamp()
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp() // Real-time badging alignment
                 });
 
                 document.getElementById('ticket-form').reset();
@@ -399,7 +451,7 @@
                 const q = query(
                     collection(db, "tickets"), 
                     where("userId", "==", currentUser.uid),
-                    orderBy("createdAt", "desc")
+                    orderBy("updatedAt", "desc") // Orders by recent interactions
                 );
 
                 if (activeTicketsUnsubscribe) activeTicketsUnsubscribe();
@@ -407,9 +459,9 @@
                 activeTicketsUnsubscribe = onSnapshot(q, (querySnapshot) => {
                     if (querySnapshot.empty) {
                         listDiv.innerHTML = `
-                            <div class="text-center py-12 bg-white border border-gray-200 rounded-xl">
-                                <i class="fa-solid fa-folder-open text-gray-300 text-4xl mb-3"></i>
-                                <p class="text-gray-500 font-medium">You don't have any submitted support requests yet.</p>
+                            <div class="text-center py-10 bg-white border border-gray-200 rounded-xl px-4">
+                                <i class="fa-solid fa-folder-open text-gray-300 text-3xl mb-2"></i>
+                                <p class="text-gray-500 text-sm font-medium">You don't have any submitted support requests yet.</p>
                             </div>`;
                         return;
                     }
@@ -418,35 +470,46 @@
                     querySnapshot.forEach((docSnap) => {
                         const ticket = docSnap.data();
                         const ticketId = docSnap.id;
-                        const statusColor = ticket.status === 'Open' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800';
+                        
+                        // Action styling logic
+                        let statusColor = "bg-amber-100 text-amber-800";
+                        let displayStatus = ticket.status;
+                        if (ticket.status === 'Answered') {
+                            statusColor = "bg-emerald-100 text-emerald-800";
+                            displayStatus = "Answered";
+                        } else if (ticket.status === 'Open') {
+                            statusColor = "bg-blue-100 text-blue-800";
+                            displayStatus = "Open";
+                        }
+                        
                         const dateFormatted = ticket.createdAt ? ticket.createdAt.toDate().toLocaleDateString() : 'Just now';
                         
                         html += `
-                            <div class="bg-white border border-gray-200 rounded-xl p-5 shadow-sm hover:border-gray-300 transition text-left">
-                                <div class="flex flex-wrap justify-between items-start gap-2 mb-3">
+                            <div class="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 shadow-sm hover:border-gray-300 transition text-left">
+                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
                                     <div>
-                                        <span class="text-xs font-semibold uppercase tracking-wider text-gray-400 block mb-1">${ticket.category}</span>
-                                        <h3 class="text-lg font-bold text-gray-900">${ticket.subject}</h3>
+                                        <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-500 block mb-0.5">${ticket.category}</span>
+                                        <h3 class="text-base sm:text-lg font-bold text-gray-900 leading-snug">${ticket.subject}</h3>
                                     </div>
-                                    <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${statusColor}">${ticket.status}</span>
+                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${statusColor} self-start sm:self-center">${displayStatus}</span>
                                 </div>
-                                <p class="text-gray-600 text-sm whitespace-pre-wrap mb-4 border-l-2 border-gray-200 pl-3">${ticket.description}</p>
+                                <p class="text-gray-600 text-xs sm:text-sm whitespace-pre-wrap mb-4 border-l-2 border-gray-200 pl-3 leading-relaxed">${ticket.description}</p>
                                 
                                 <div id="msg-thread-${ticketId}" class="mt-4 pt-4 border-t border-gray-100 space-y-2 hidden">
                                     <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2"><i class="fa-solid fa-comments text-indigo-500 mr-1"></i> Messages Feed</h4>
-                                    <div id="msg-feed-${ticketId}" class="space-y-2 max-h-60 overflow-y-auto pr-2">
+                                    <div id="msg-feed-${ticketId}" class="space-y-2 max-h-60 overflow-y-auto pr-1">
                                         <p class="text-xs text-gray-400 italic">Connecting...</p>
                                     </div>
                                     
                                     <div class="flex gap-2 mt-3 pt-2">
-                                        <input type="text" id="input-reply-${ticketId}" placeholder="Write a response back to support team..." class="flex-grow border border-gray-300 rounded-lg p-2 text-xs outline-none focus:ring-1 focus:ring-indigo-500">
-                                        <button onclick="sendUserReply('${ticketId}')" class="bg-indigo-600 text-white text-xs px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition">Send</button>
+                                        <input type="text" id="input-reply-${ticketId}" placeholder="Write a response back..." class="flex-grow border border-gray-300 rounded-lg p-2 text-xs outline-none focus:ring-1 focus:ring-indigo-500">
+                                        <button onclick="sendUserReply('${ticketId}')" class="bg-indigo-600 text-white text-xs px-3 sm:px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition">Send</button>
                                     </div>
                                 </div>
 
-                                <div class="text-xs text-gray-400 flex justify-between items-center mt-4 pt-3 border-t border-gray-50">
+                                <div class="text-xs text-gray-400 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mt-4 pt-3 border-t border-gray-50">
                                     <span><i class="fa-regular fa-clock"></i> Submitted on ${dateFormatted}</span>
-                                    <button onclick="toggleConversationThread('${ticketId}')" class="text-indigo-600 hover:text-indigo-800 font-semibold focus:outline-none flex items-center gap-1">
+                                    <button onclick="toggleConversationThread('${ticketId}')" class="text-indigo-600 hover:text-indigo-800 font-semibold focus:outline-none flex items-center gap-1 text-xs self-end sm:self-auto">
                                         <i class="fa-regular fa-comment-dots text-sm"></i> View Messages Thread
                                     </button>
                                 </div>
@@ -456,11 +519,11 @@
                     });
                     listDiv.innerHTML = html;
                 }, (error) => {
-                    listDiv.innerHTML = `<p class="text-red-500">Error rendering data: ${error.message}</p>`;
+                    listDiv.innerHTML = `<p class="text-red-500 text-xs">Error rendering data: ${error.message}</p>`;
                 });
 
             } catch (error) {
-                listDiv.innerHTML = `<p class="text-red-500">Error loading components: ${error.message}</p>`;
+                listDiv.innerHTML = `<p class="text-red-500 text-xs">Error loading components: ${error.message}</p>`;
             }
         }
 
@@ -482,13 +545,13 @@
                 snapshot.forEach((msgDoc) => {
                     const msg = msgDoc.data();
                     const isAdmin = msg.sender === 'Admin';
-                    const bubbleStyle = isAdmin ? 'bg-indigo-50 border-indigo-100 text-indigo-900 mr-12' : 'bg-gray-100 border-gray-200 text-gray-800 ml-12 text-right';
+                    const bubbleStyle = isAdmin ? 'bg-indigo-50 border-indigo-100 text-indigo-900 mr-8 sm:mr-12' : 'bg-gray-100 border-gray-200 text-gray-800 ml-8 sm:ml-12';
                     const identityLabel = isAdmin ? '⚡ Support Team (Admin)' : 'You';
 
                     html += `
-                        <div class="${bubbleStyle} border p-3 rounded-xl text-xs shadow-sm">
-                            <span class="font-bold block text-[10px] text-indigo-600 mb-1 uppercase tracking-wider">${identityLabel}</span>
-                            <span class="whitespace-pre-wrap">${msg.text}</span>
+                        <div class="${bubbleStyle} border p-2.5 rounded-xl text-xs shadow-sm">
+                            <span class="font-bold block text-[9px] text-indigo-600 mb-0.5 uppercase tracking-wider">${identityLabel}</span>
+                            <span class="whitespace-pre-wrap leading-relaxed">${msg.text}</span>
                         </div>
                     `;
                 });
@@ -508,11 +571,19 @@
             if (!replyText) return;
 
             try {
+                // Add reply to target subcollection
                 await addDoc(collection(db, "tickets", ticketId, "messages"), {
                     sender: "Customer",
                     text: replyText,
                     timestamp: serverTimestamp()
                 });
+                
+                // Update master node configuration so that admin screen fires alert indicators instantly
+                await updateDoc(doc(db, "tickets", ticketId), {
+                    status: "Open",
+                    updatedAt: serverTimestamp()
+                });
+                
                 inputField.value = "";
             } catch (err) {
                 alert("Failed to deliver message: " + err.message);
