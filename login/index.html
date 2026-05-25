@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login | Audiory Buyer & Producer Access</title>
+  <link rel="stylesheet" href="/css/auth.css" />
+  <link rel="stylesheet" href="/css/mobile-fix.css">
+  <style>
+    /* Global Background to match the Help Desk body */
+    body {
+      background-color: #f8fafc;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Elegant Gradient Top Area like the Help Desk Banner */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 380px;
+      background: linear-gradient(135deg, #3b2fad 0%, #1d1b84 50%, #111440 100%);
+      z-index: -1;
+    }
+
+    /* Container matching the Help Desk White Cards */
+    .auth-box {
+      background: #ffffff;
+      max-width: 450px;
+      width: 90%;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+      box-sizing: border-box;
+    }
+
+    .auth-box h2 {
+      color: #1e293b;
+      font-size: 28px;
+      font-weight: 800;
+      margin-top: 0;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .auth-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+
+    /* Primary Login Button matching Help Desk Indigo actions */
+    .auth-actions button {
+      flex: 1;
+      min-width: 140px;
+      height: 52px;
+      background: #4f46e5;
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .auth-actions button:hover {
+      background: #4338ca;
+    }
+
+    .auth-actions button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    /* Clean link button styling */
+    .link-btn {
+      background: none;
+      border: none;
+      color: #4f46e5;
+      cursor: pointer;
+      padding: 0;
+      margin-top: 16px;
+      text-align: left;
+      font-size: 15px;
+      font-weight: 700;
+      transition: color 0.2s ease;
+    }
+
+    .link-btn:hover {
+      color: #3730a3;
+      text-decoration: underline;
+    }
+
+    .muted {
+      color: #64748b;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 8px;
+    }
+
+    /* Input wrapper adapted to clean light UI */
+    .auth-input {
+      width: 100%;
+      height: 56px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      overflow: hidden;
+      padding-right: 6px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .auth-input:focus-within {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    }
+
+    .auth-input-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 16px;
+      min-width: 0;
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    .auth-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #64748b;
+      flex: 0 0 auto;
+    }
+
+    .auth-icon svg {
+      width: 20px;
+      height: 20px;
+      display: block;
+    }
+
+    .auth-divider {
+      width: 1px;
+      height: 24px;
+      background: #e2e8f0;
+      flex: 0 0 auto;
+    }
+
+    .auth-input input {
+      flex: 1;
+      min-width: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: #1e293b;
+      font-size: 15px;
+      font-weight: 600;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .auth-input input::placeholder {
+      color: #94a3b8;
+      opacity: 1;
+    }
+
+    /* Password Eye Button adapted to light style */
+    .auth-eye-btn {
+      width: 44px;
+      min-width: 44px;
+      height: 44px;
+      border: none;
+      border-radius: 8px;
+      background: #f1f5f9;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
+      flex: 0 0 44px;
+      box-sizing: border-box;
+      align-self: center;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .auth-eye-btn:hover {
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .auth-eye-btn svg {
+      width: 20px;
+      height: 20px;
+      display: block;
+    }
+
+    /* Dynamic context for signup callout text */
+    p {
+      color: #64748b;
+      font-size: 15px;
+    }
+
+    p a {
+      color: #4f46e5;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    p a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      body::before {
+        height: 260px;
+      }
+      .auth-box {
+        padding: 24px 20px;
+        margin-top: 40px;
+      }
+      .auth-input {
+        height: 52px;
+      }
+      .auth-eye-btn {
+        width: 40px;
+        min-width: 40px;
+        height: 40px;
+        flex: 0 0 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="auth-box">
+    <h2>Login</h2>
+
+    <div class="field">
+      <label for="email">Email</label>
+      <div class="auth-input">
+        <div class="auth-input-main">
+          <span class="auth-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h18v12H3z"></path>
+              <path d="M3 7l9 7 9-7"></path>
+            </svg>
+          </span>
+          <span class="auth-divider"></span>
+          <input id="email" type="email" placeholder="Enter Email" autocomplete="email" />
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="password">Password</label>
+      <div class="auth-input">
+        <div class="auth-input-main">
+          <span class="auth-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="8.5" cy="10.5" r="3.25"></circle>
+              <path d="M11.5 10.5H21"></path>
+              <path d="M18 10.5v3"></path>
+              <path d="M15.5 10.5v2"></path>
+            </svg>
+          </span>
+          <span class="auth-divider"></span>
+          <input id="password" type="password" placeholder="Enter password" autocomplete="current-password" />
+        </div>
+
+        <button class="auth-eye-btn" id="pwToggle" type="button" aria-label="Show password">
+          <svg id="pwEyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <svg id="pwEyeOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+            <path d="M3 3l18 18"></path>
+            <path d="M10.6 10.7a3 3 0 0 0 4.2 4.2"></path>
+            <path d="M9.9 5.1A10.9 10.9 0 0 1 12 5c6.5 0 10 7 10 7a17.3 17.3 0 0 1-3.2 4.2"></path>
+            <path d="M6.2 6.3C3.7 8 2 12 2 12a17.8 17.8 0 0 0 5.4 5.1"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="auth-actions">
+      <button id="loginBtn" type="button">Login</button>
+      <button id="googleBtn" type="button" style="display:none;">Continue with Google</button>
+    </div>
+
+    <button class="link-btn" id="resetBtn" type="button">Forgot password?</button>
+    <div class="muted" id="status"></div>
+
+    <p style="margin-top:20px; text-align: center;">
+      Don’t have an account?
+      <a href="/register/">Register</a>
+    </p>
+  </div>
+
+  <script type="module" src="/auth-ui.js"></script>
+
+  <script>
+    document.getElementById("loginBtn")?.addEventListener("click", async () => {
+      const btn = document.getElementById("loginBtn");
+      const status = document.getElementById("status");
+
+      try{
+        if (status) status.textContent = "";
+        if (btn){
+          btn.disabled = true;
+          btn.textContent = "Logging in...";
+        }
+
+        await window.loginUser?.();
+      } catch (e){
+        console.error(e);
+      } finally {
+        if (btn){
+          btn.disabled = false;
+          btn.textContent = "Login";
+        }
+      }
+    });
+    document.getElementById("resetBtn")?.addEventListener("click", async () => {
+      const btn = document.getElementById("resetBtn");
+
+      try{
+        if (btn){
+          btn.disabled = true;
+          btn.textContent = "Sending reset email...";
+        }
+
+        await window.resetPassword?.();
+      } catch (e){
+        console.error(e);
+      } finally {
+        if (btn){
+          btn.disabled = false;
+          btn.textContent = "Forgot password?";
+        }
+      }
+    });
+
+    (function(){
+      const pw = document.getElementById("password");
+      const btn = document.getElementById("pwToggle");
+      const eyeOpen = document.getElementById("pwEyeOpen");
+      const eyeOff = document.getElementById("pwEyeOff");
+      if(!pw || !btn) return;
+
+      btn.addEventListener("click", ()=>{
+        const showing = pw.type === "text";
+        pw.type = showing ? "password" : "text";
+        if (eyeOpen) eyeOpen.style.display = showing ? "" : "none";
+        if (eyeOff) eyeOff.style.display = showing ? "none" : "";
+      });
+    })();
+  </script>
+</body>
+</html>
