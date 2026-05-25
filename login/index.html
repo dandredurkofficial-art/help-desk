@@ -18,6 +18,7 @@
       min-height: 100vh;
       align-items: center;
       justify-content: center;
+      position: relative;
     }
 
     /* Elegant Gradient Top Area like the Help Desk Banner */
@@ -32,6 +33,28 @@
       z-index: -1;
     }
 
+    /* Absolute positioned Brand Logo Header */
+    .brand-header {
+      position: absolute;
+      top: 24px;
+      left: 32px;
+      z-index: 10;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #ffffff;
+    }
+
+    .brand-logo svg {
+      height: 36px;
+      width: auto;
+      display: block;
+    }
+
     /* Container matching the Help Desk White Cards */
     .auth-box {
       background: #ffffff;
@@ -41,6 +64,7 @@
       padding: 40px;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
       box-sizing: border-box;
+      margin-top: 60px; /* Accounts for the logo placement above on desktop */
     }
 
     .auth-box h2 {
@@ -247,9 +271,16 @@
       body::before {
         height: 260px;
       }
+      .brand-header {
+        position: relative;
+        top: auto;
+        left: auto;
+        margin-top: 32px;
+        margin-bottom: 16px;
+      }
       .auth-box {
         padding: 24px 20px;
-        margin-top: 40px;
+        margin-top: 0;
       }
       .auth-input {
         height: 52px;
@@ -264,6 +295,17 @@
   </style>
 </head>
 <body>
+
+  <header class="brand-header">
+    <a href="/" class="brand-logo" aria-label="Audiory Home">
+      <svg viewBox="0 0 160 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 28C6.47715 28 2 23.5228 2 18C2 12.4772 6.47715 8 12 8C17.5228 8 22 12.4772 22 18C22 23.5228 17.5228 28 12 28Z" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M8 21V15L12 11L16 15V21" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12 11V23" stroke="#818cf8" stroke-width="2.5" stroke-linecap="round"/>
+        <text x="34" y="25" fill="white" font-family="system-ui, sans-serif" font-size="20" font-weight="800" letter-spacing="-0.5">Audiory</text>
+      </svg>
+    </a>
+  </header>
 
   <div class="auth-box">
     <h2>Login</h2>
