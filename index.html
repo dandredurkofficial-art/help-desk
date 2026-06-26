@@ -336,7 +336,7 @@
         async function loadArticle(fileName) {
             showView('article');
             const contentDiv = document.getElementById('article-content');
-            contentDiv.innerHTML = `<div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-xl text-indigo-600"></i><p class="text-gray-500 text-xs mt-2">Loading document from GitHub...</p></div>`;
+            contentDiv.innerHTML = `<div class="text-center py-8"><i class="fa-solid fa-spinner fa-spin text-xl text-indigo-600"></i><p class="text-gray-500 text-xs mt-2">Loading...</p></div>`;
             
             const rawUrl = `https://raw.githubusercontent.com/${GITHUB_REPO_CONFIG.username}/${GITHUB_REPO_CONFIG.repo}/${GITHUB_REPO_CONFIG.branch}/${fileName}`;
             
